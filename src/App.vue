@@ -5,9 +5,9 @@ import NavBar from './components/NavBar.vue'
 <template>
 
   <NavBar />
-  
-  <main class="container">
+
+  <main class="container" :class="{ wide: $route.name === 'schedule' }">
     <RouterView />
   </main>
-
+  
 </template>

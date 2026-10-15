@@ -5,7 +5,7 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background-color: whitesmoke;
+  background-color: cornsilk;
   color: black;
 }
 
@@ -15,10 +15,9 @@ h3 {
   margin-top: 0;
 }
 
-
 .navbar {
-  background-color: steelblue;
-  color: white;
+  background-color: saddlebrown;
+  color: gold;
   padding: 15px 30px;
   display: flex;
   justify-content: space-between;
@@ -30,7 +29,7 @@ h3 {
 }
 
 .nav-links a {
-  color: white;
+  color: gold;
   text-decoration: none;
   margin-left: 20px;
   padding: 8px 12px;
@@ -38,14 +37,13 @@ h3 {
 }
 
 .nav-links a:hover {
-  background-color: royalblue;
+  background-color: sienna;
 }
-
 
 .nav-links a.router-link-active {
-  background-color: navy;
+  background-color: gold;
+  color: saddlebrown;
 }
-
 
 .container {
   max-width: 900px;
@@ -53,34 +51,36 @@ h3 {
   padding: 20px;
 }
 
+.container.wide {
+  max-width: 1500px;
+}
+
 .page-header {
   margin-bottom: 20px;
 }
 
 .page-header h1 {
-  color: navy;
+  color: saddlebrown;
   margin-bottom: 5px;
 }
 
 .page-header p {
-  color: gray;
+  color: sienna;
   margin: 0;
 }
-
 
 .card {
   background-color: white;
   padding: 20px;
   margin-bottom: 20px;
   border-radius: 8px;
-  border: 1px solid lightgray;
+  border: 1px solid burlywood;
 }
 
 .warning {
-  background-color: lightyellow;
-  border-color: gold;
+  background-color: bisque;
+  border-color: peru;
 }
-
 
 .stats {
   display: flex;
@@ -90,7 +90,7 @@ h3 {
 
 .stat-card {
   flex: 1;
-  background-color: lightblue;
+  background-color: gold;
   text-align: center;
   padding: 20px;
   border-radius: 8px;
@@ -99,30 +99,30 @@ h3 {
 .stat-card h3 {
   font-size: 36px;
   margin: 0;
-  color: navy;
+  color: saddlebrown;
 }
 
 .stat-card p {
   margin: 5px 0 0 0;
+  color: saddlebrown;
 }
-
 
 .form label {
   display: block;
   margin-top: 12px;
   margin-bottom: 4px;
   font-weight: bold;
+  color: saddlebrown;
 }
 
 .form input,
 .form select {
   width: 100%;
   padding: 8px;
-  border: 1px solid gray;
+  border: 1px solid peru;
   border-radius: 5px;
   font-size: 16px;
 }
-
 
 .button-row {
   margin-top: 15px;
@@ -133,8 +133,9 @@ h3 {
 }
 
 .btn {
-  background-color: steelblue;
-  color: white;
+  background-color: gold;
+  color: saddlebrown;
+  font-weight: bold;
   border: none;
   padding: 10px 16px;
   border-radius: 5px;
@@ -144,7 +145,7 @@ h3 {
 }
 
 .btn:hover {
-  background-color: royalblue;
+  background-color: goldenrod;
 }
 
 .btn-small {
@@ -154,6 +155,7 @@ h3 {
 
 .btn-danger {
   background-color: crimson;
+  color: white;
   padding: 5px 10px;
   font-size: 14px;
 }
@@ -163,13 +165,13 @@ h3 {
 }
 
 .btn-gray {
-  background-color: gray;
+  background-color: sienna;
+  color: white;
 }
 
 .btn-gray:hover {
-  background-color: dimgray;
+  background-color: saddlebrown;
 }
-
 
 table {
   width: 100%;
@@ -177,31 +179,29 @@ table {
 }
 
 th {
-  background-color: steelblue;
-  color: white;
+  background-color: saddlebrown;
+  color: gold;
   text-align: left;
   padding: 10px;
 }
 
 td {
   padding: 10px;
-  border-bottom: 1px solid lightgray;
+  border-bottom: 1px solid burlywood;
 }
 
 tr:hover td {
-  background-color: aliceblue;
+  background-color: lemonchiffon;
 }
 
 td .btn {
   margin-right: 5px;
 }
 
-
 .task-done td {
   color: gray;
   text-decoration: line-through;
 }
-
 
 ul {
   padding-left: 20px;
@@ -211,6 +211,77 @@ li {
   margin-bottom: 8px;
 }
 
+.section-title {
+  margin-top: 25px;
+  color: saddlebrown;
+}
+
+.slot-box {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  background-color: lemonchiffon;
+  border: 1px solid burlywood;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+
+.slot-field {
+  flex: 1;
+  min-width: 120px;
+}
+
+.schedule-line {
+  margin: 0 0 4px 0;
+  font-size: 14px;
+}
+
+.timetable-wrapper {
+  overflow-x: auto;
+}
+
+.timetable {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(170px, 1fr));
+  gap: 12px;
+}
+
+.day-column {
+  background-color: white;
+  border: 1px solid burlywood;
+  border-radius: 8px;
+  padding: 12px;
+  min-height: 400px;
+}
+
+.day-title {
+  background-color: saddlebrown;
+  color: gold;
+  text-align: center;
+  padding: 12px;
+  border-radius: 5px;
+  font-size: 18px;
+}
+
+.empty-day {
+  color: sienna;
+  text-align: center;
+  font-size: 16px;
+}
+
+.class-block {
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 5px;
+  border: 1px solid peru;
+  font-size: 16px;
+}
+
+.class-block p {
+  margin: 5px 0 0 0;
+}
 
 @media (max-width: 600px) {
   .navbar {

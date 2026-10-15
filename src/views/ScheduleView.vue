@@ -1,95 +1,48 @@
 <script setup>
 
-import { ref, computed } from 'vue'
-import { loadData, saveData } from '../storage.js'
+import { loadData } from '../storage.js'
 import PageHeader from '../components/PageHeader.vue'
-import DeleteButton from '../components/DeleteButton.vue'
 
 const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
+const colors = [
+  'gold',
+  'lightsalmon',
+  'khaki',
+  'burlywood',
+  'peachpuff',
+  'sandybrown',
+  'palegoldenrod',
+  'wheat',
+]
+
 const subjects = loadData('tt_subjects')
-const schedule = ref(loadData('tt_schedule'))
-const form = ref({ subjectId: '', day: 'Monday', startTime: '', endTime: '', room: '' })
-const editingId = ref(null)
+const schedule = loadData('tt_schedule')
 
-function resetForm() {
-  form.value = { subjectId: '', day: 'Monday', startTime: '', endTime: '', room: '' }
-  editingId.value = null
-}
-
-function getSubjectName(id) {
-  const subject = subjects.find(function (s) {
+function getSubject(id) {
+  return subjects.find(function (s) {
     return s.id === id
   })
-  if (subject) {
-    return subject.code + ' - ' + subject.name
-  }
-  return 'Unknown subject'
 }
 
-const sortedSchedule = computed(function () {
-  const copy = [...schedule.value]
-  copy.sort(function (a, b) {
-    const dayA = days.indexOf(a.day)
-    const dayB = days.indexOf(b.day)
-    if (dayA !== dayB) {
-      return dayA - dayB
-    }
+function getColor(id) {
+  const index = subjects.findIndex(function (s) {
+    return s.id === id
+  })
+  if (index === -1) {
+    return 'lightgray'
+  }
+  return colors[index % colors.length]
+}
+
+function getClassesForDay(day) {
+  const list = schedule.filter(function (item) {
+    return item.day === day
+  })
+  list.sort(function (a, b) {
     return a.startTime.localeCompare(b.startTime)
   })
-  return copy
-})
-
-function saveClass() {
-  if (form.value.subjectId === '' || form.value.startTime === '' || form.value.endTime === '') {
-    alert('Please choose a subject and enter the start and end time.')
-    return
-  }
-  if (form.value.endTime <= form.value.startTime) {
-    alert('End time must be later than the start time.')
-    return
-  }
-
-  if (editingId.value === null) {
-    schedule.value.push({
-      id: Date.now(),
-      subjectId: form.value.subjectId,
-      day: form.value.day,
-      startTime: form.value.startTime,
-      endTime: form.value.endTime,
-      room: form.value.room,
-    })
-  } else {
-    const item = schedule.value.find(function (c) {
-      return c.id === editingId.value
-    })
-    item.subjectId = form.value.subjectId
-    item.day = form.value.day
-    item.startTime = form.value.startTime
-    item.endTime = form.value.endTime
-    item.room = form.value.room
-  }
-
-  saveData('tt_schedule', schedule.value)
-  resetForm()
-}
-
-function editClass(item) {
-  editingId.value = item.id
-  form.value = {
-    subjectId: item.subjectId,
-    day: item.day,
-    startTime: item.startTime,
-    endTime: item.endTime,
-    room: item.room,
-  }
-}
-
-function deleteClass(id) {
-  schedule.value = schedule.value.filter(function (c) {
-    return c.id !== id
-  })
-  saveData('tt_schedule', schedule.value)
+  return list
 }
 
 </script>
@@ -98,87 +51,33 @@ function deleteClass(id) {
 
   <div>
 
-    <PageHeader title="Class Schedule" subtitle="Plan your weekly classes" />
+    <PageHeader title="Class Schedule" subtitle="Your weekly timetable" />
 
-    <p v-if="subjects.length === 0" class="card warning">
-      You need to add a subject first.
-      <RouterLink to="/subjects">Go to Subjects</RouterLink>
+    <p v-if="schedule.length === 0" class="card warning">
+      No classes yet. Add a subject with a class schedule in
+      <RouterLink to="/subjects">Subjects</RouterLink>.
     </p>
 
-    <form v-else class="card form" @submit.prevent="saveClass">
+    <div v-else class="timetable-wrapper">
 
-      <h2>{{ editingId === null ? 'Add Class' : 'Edit Class' }}</h2>
+      <div class="timetable">
 
-      <label>Subject</label>
-      <select v-model="form.subjectId">
-        <option value="">-- Choose a subject --</option>
-        <option v-for="subject in subjects" :key="subject.id" :value="subject.id">
-          {{ subject.code }} - {{ subject.name }}
-        </option>
-      </select>
+        <div v-for="day in days" :key="day" class="day-column">
 
-      <label>Day</label>
-      <select v-model="form.day">
-        <option v-for="day in days" :key="day" :value="day">{{ day }}</option>
-      </select>
+          <h3 class="day-title">{{ day }}</h3>
+          <p v-if="getClassesForDay(day).length === 0" class="empty-day">No classes</p>
 
-      <label>Start Time</label>
-      <input v-model="form.startTime" type="time" />
+          <div v-for="item in getClassesForDay(day)" :key="item.id" class="class-block" :style="{ backgroundColor: getColor(item.subjectId) }">
+            <strong>{{ getSubject(item.subjectId).code }}</strong>
 
-      <label>End Time</label>
-      <input v-model="form.endTime" type="time" />
+            <p>{{ getSubject(item.subjectId).name }}</p>
+            <p>{{ item.startTime }} - {{ item.endTime }}</p>
+            <p v-if="item.room !== ''">{{ item.room }}</p>
 
-      <label>Room</label>
-      <input v-model="form.room" type="text" placeholder="e.g. Room 204" />
-
-      <div class="button-row">
-        
-        <button class="btn" type="submit">
-          {{ editingId === null ? 'Add Class' : 'Save Changes' }}
-        </button>
-
-        <button v-if="editingId !== null" class="btn btn-gray" type="button" @click="resetForm">
-          Cancel
-        </button>
-
+          </div>
+        </div>
       </div>
-
-    </form>
-
-    <section class="card">
-
-      <h2>Weekly Schedule</h2>
-      <p v-if="schedule.length === 0">No classes yet.</p>
-
-      <table v-else>
-
-        <thead>
-          <tr>
-            <th>Day</th>
-            <th>Time</th>
-            <th>Subject</th>
-            <th>Room</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          <tr v-for="item in sortedSchedule" :key="item.id">
-            <td>{{ item.day }}</td>
-            <td>{{ item.startTime }} - {{ item.endTime }}</td>
-            <td>{{ getSubjectName(item.subjectId) }}</td>
-            <td>{{ item.room }}</td>
-            <td>
-              <button class="btn btn-small" @click="editClass(item)">Edit</button>
-              <DeleteButton @confirmed="deleteClass(item.id)" />
-            </td>
-          </tr>
-        </tbody>
-
-      </table>
-
-    </section>
-
+    </div>
   </div>
 
 </template>
