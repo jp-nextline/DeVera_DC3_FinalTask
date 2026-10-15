@@ -1,7 +1,7 @@
 <script setup>
 
-import { ref } from 'vue'
-import { loadData, saveData } from '../storage.js'
+import { ref, watch } from 'vue'
+import { loadData, saveData, loadObject, saveObject } from '../storage.js'
 import PageHeader from '../components/PageHeader.vue'
 import DeleteButton from '../components/DeleteButton.vue'
 
@@ -10,13 +10,37 @@ const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
 const subjects = ref(loadData('tt_subjects'))
 const schedule = ref(loadData('tt_schedule'))
 
-const form = ref({ code: '', name: '', instructor: '', units: 3 })
-const slots = ref([newSlot()])
-const editingId = ref(null)
-
 function newSlot() {
   return { day: 'Monday', startTime: '', endTime: '', room: '' }
 }
+
+const draft = loadObject('tt_draft_subject', null)
+
+const form = ref({
+  code: draft?.form?.code ?? '',
+  name: draft?.form?.name ?? '',
+  instructor: draft?.form?.instructor ?? '',
+  units: draft?.form?.units ?? 3,
+})
+const slots = ref(
+  draft?.slots && draft.slots.length > 0
+    ? draft.slots.map((slot) => ({ ...slot }))
+    : [newSlot()]
+)
+const editingId = ref(draft?.editingId ?? null)
+
+watch(
+  [form, slots, editingId],
+  function () {
+    saveObject('tt_draft_subject', {
+      form: form.value,
+      slots: slots.value,
+      editingId: editingId.value,
+    })
+  },
+  { deep: true}
+)
+
 
 function addSlot() {
   slots.value.push(newSlot())

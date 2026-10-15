@@ -1,14 +1,33 @@
 <script setup>
 
-import { ref, computed } from 'vue'
-import { loadData, saveData } from '../storage.js'
+import { ref, computed, watch } from 'vue'
+import { loadData, saveData, loadObject, saveObject } from '../storage.js'
 import PageHeader from '../components/PageHeader.vue'
 import DeleteButton from '../components/DeleteButton.vue'
 
 const subjects = loadData('tt_subjects')
 const tasks = ref(loadData('tt_tasks'))
-const form = ref({ title: '', subjectId: '', dueDate: '' })
-const editingId = ref(null)
+
+const draft = loadObject('tt_draft_task', null)
+
+const form = ref({
+  title: draft?.form?.title ?? '',
+  subjectId: draft?.form?.subjectId ?? '',
+  dueDate: draft?.form?.dueDate ?? '',
+})
+const editingId = ref(draft?.editingId ?? null)
+
+watch(
+  [form, editingId],
+  function () {
+    saveObject('tt_draft_task', {
+      form: form.value,
+      editingId: editingId.value,
+    })
+  },
+  { deep: true }
+)
+
 const filter = ref('all')
 
 function resetForm() {
